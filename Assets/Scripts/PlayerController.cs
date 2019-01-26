@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+    [SerializeField]
+    Animator animator;
+
     /// <summary>
     /// Current player score
     /// </summary>
@@ -129,8 +132,23 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         onGround = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-
+        UpdateAirAnimBool(!onGround);
         //Debug.Log("On Ground: " + onGround);
+    }
+
+    void UpdateAirAnimBool(bool val)
+    {
+        animator.SetBool("InAir", val);
+    }
+
+    void UpdateRightAnimBool(bool val)
+    {
+        animator.SetBool("MovingRight", val);
+    }
+
+    void UpdateLeftAnimBool(bool val)
+    {
+        animator.SetBool("MovingLeft", val);
     }
 
     void FixedUpdate()
@@ -141,14 +159,18 @@ public class PlayerController : MonoBehaviour
     void PlayerInputForce()
     {
         Vector2 movementVector = new Vector2();
+        bool leftBool = false;
+        bool rightBool = false;
 
         if (Input.GetButton("Left"))
         {
             movementVector.x -= speed;
+            leftBool = true;
         }
         if (Input.GetButton("Right"))
         {
             movementVector.x += speed;
+            rightBool = true;
         }
         if (movementVector.x == 0)
         {
@@ -161,6 +183,15 @@ public class PlayerController : MonoBehaviour
             RestartJumpTimer();
             movementVector.y += (hasJumpPowerUp ? jumpMultiplier : 1) * jumpPower;
         }
+
+        if(rightBool && leftBool)
+        {
+            leftBool = false;
+            rightBool = false;
+        }
+
+        UpdateLeftAnimBool(leftBool);
+        UpdateRightAnimBool(rightBool);
 
         MovePlayerForce(movementVector);
     }
