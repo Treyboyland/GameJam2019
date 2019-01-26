@@ -15,6 +15,30 @@ public class PlayerController : MonoBehaviour
     float speed;
 
     [SerializeField]
+    float maxSpeed;
+
+    float updateY;
+
+    [SerializeField]
+    float jumpPower;
+
+    public float jumpHeight;
+
+    public float JumpPower
+    {
+        get
+        {
+            return jumpPower;
+        }
+        set
+        {
+            jumpPower = value;
+        }
+    }
+
+    public float secondsToJump;
+
+    [SerializeField]
     Rigidbody2D playerBody;
 
     /// <summary>
@@ -33,6 +57,8 @@ public class PlayerController : MonoBehaviour
     }
 
     static PlayerController _instance;
+
+    bool jumping = false;
 
     /// <summary>
     /// Reference to the current player
@@ -72,29 +98,105 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        PlayerInput();
+        PlayerInputForce();
     }
 
     void PlayerInput()
     {
         Vector2 movementVector = new Vector2();
 
-        if(Input.GetButton("Left"))
+        if (Input.GetButton("Left"))
         {
             movementVector.x -= speed;
         }
-        if(Input.GetButton("Right"))
+        if (Input.GetButton("Right"))
         {
             movementVector.x += speed;
         }
 
+        if (Input.GetButtonDown("Up"))
+        {
+            StartCoroutine(PerformJump());
+            //Jump();
+        }
+
+        if (jumping)
+        {
+            movementVector.y = updateY;
+        }
 
         MovePlayer(movementVector);
+
+
+
+
+
+    }
+
+    void PlayerInputForce()
+    {
+        Vector2 movementVector = new Vector2();
+
+        if (Input.GetButton("Left"))
+        {
+            movementVector.x -= speed;
+        }
+        if (Input.GetButton("Right"))
+        {
+            movementVector.x += speed;
+        }
+        if(Input.GetButtonDown("Jump"))
+        {
+            movementVector.y += jumpPower;
+        }
+
+        MovePlayerForce(movementVector);
+    }
+
+    IEnumerator PerformJump()
+    {
+        jumping = true;
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Start();
+
+        float startY = gameObject.transform.position.y;
+
+
+        while (timer.Elapsed.TotalSeconds < secondsToJump)
+        {
+            //TODO: Jump broke
+            updateY = jumpHeight; //* Mathf.Sin(Mathf.PI / 2 + Mathf.PI * (float)timer.Elapsed.TotalSeconds / secondsToJump);
+            Debug.LogWarning(Mathf.Sin(Mathf.PI * (float)timer.Elapsed.TotalSeconds / secondsToJump));
+            //Vector2 pos = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y + Mathf.Lerp(0, jumpHeight, (float)timer.Elapsed.TotalSeconds / secondsToJump));
+            //Debug.LogWarning("Jumping: " + pos);
+            //playerBody.MovePosition(pos);
+            yield return null;
+        }
+
+        Debug.LogWarning("Jump FInihed");
+
+        jumping = false;
+    }
+
+    void Jump()
+    {
+        playerBody.AddRelativeForce(Vector2.up * jumpPower);
     }
 
     void MovePlayer(Vector2 vector)
     {
         Vector2 pos = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
+        Debug.Log("NOT Jumping: " + pos);
         playerBody.MovePosition(pos + vector * Time.fixedDeltaTime);
+    }
+
+    void MovePlayerForce(Vector2 vector)
+    {
+        playerBody.AddForce(speed * vector, ForceMode2D.Impulse);
+
+        if(Mathf.Abs(playerBody.velocity.x) > maxSpeed)
+        {
+            playerBody.velocity = new Vector2((playerBody.velocity.x < 0 ? -1 : 1) * maxSpeed, playerBody.velocity.y);
+        }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FollowPlayerCamera : MonoBehaviour
 {
-    void FixedUpdate()
+    void Update()
     {
         Vector3 pos = gameObject.transform.position;
         Vector3 playerPos = PlayerController.Player.transform.position;
