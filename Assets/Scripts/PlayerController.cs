@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     Rigidbody2D playerBody;
 
+    [SerializeField]
+    Transform groundCheck;
+
     /// <summary>
     /// Current player score
     /// </summary>
@@ -59,6 +62,8 @@ public class PlayerController : MonoBehaviour
     static PlayerController _instance;
 
     bool jumping = false;
+
+    bool onGround = false;
 
     /// <summary>
     /// Reference to the current player
@@ -90,10 +95,19 @@ public class PlayerController : MonoBehaviour
         GameManager.Manager.OnCollectedCoin.AddListener((int add) =>
         {
             score += add;
+            Debug.LogWarning("Score: " + score);
             GameManager.Manager.OnUpdateScore.Invoke(score);
         });
 
 
+    }
+
+
+    void Update()
+    {
+        onGround = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
+
+        Debug.Log("On Ground: " + onGround);
     }
 
     void FixedUpdate()
@@ -113,6 +127,8 @@ public class PlayerController : MonoBehaviour
         {
             movementVector.x += speed;
         }
+
+        
 
         if (Input.GetButtonDown("Up"))
         {
@@ -145,7 +161,13 @@ public class PlayerController : MonoBehaviour
         {
             movementVector.x += speed;
         }
-        if(Input.GetButtonDown("Jump"))
+        if(movementVector.x == 0)
+        {
+            Vector2 v = playerBody.velocity;
+            v.x = 0;
+            playerBody.velocity = v;
+        }
+        if(onGround && Input.GetButtonDown("Jump"))
         {
             movementVector.y += jumpPower;
         }

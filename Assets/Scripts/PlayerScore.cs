@@ -11,11 +11,12 @@ public class PlayerScore : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.Manager.OnCollectedCoin.AddListener(UpdateScore);
+        GameManager.Manager.OnUpdateScore.AddListener(UpdateScore);
+        UpdateScore(0);
     }
 
     void UpdateScore(int newScore)
     {
-        textBox.text = "" + newScore;
+        textBox.text = "Coins: " + newScore;
     }
 }
