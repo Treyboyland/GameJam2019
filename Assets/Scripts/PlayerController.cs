@@ -22,8 +22,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float jumpPower;
 
-    public float jumpHeight;
-
+    /// <summary>
+    /// Force added on the jump
+    /// </summary>
+    /// <value></value>
     public float JumpPower
     {
         get
@@ -35,6 +37,26 @@ public class PlayerController : MonoBehaviour
             jumpPower = value;
         }
     }
+
+    /// <summary>
+    /// Amount of time that must elapse before the player can jump again.
+    /// </summary>
+    [SerializeField]
+    float jumpDelay;
+
+    System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+
+    /// <summary>
+    /// Multipler for the jump power up
+    /// </summary>
+    [SerializeField]
+    float jumpMultiplier;
+
+    /// <summary>
+    /// True if the player has the jump powerup
+    /// </summary>
+    [SerializeField]
+    bool hasJumpPowerUp;
 
     public float secondsToJump;
 
@@ -95,11 +117,12 @@ public class PlayerController : MonoBehaviour
         GameManager.Manager.OnCollectedCoin.AddListener((int add) =>
         {
             score += add;
-            Debug.LogWarning("Score: " + score);
+            //Debug.LogWarning("Score: " + score);
             GameManager.Manager.OnUpdateScore.Invoke(score);
         });
 
-
+        GameManager.Manager.OnCollectedJumpPowerUp.AddListener(() => hasJumpPowerUp = true);
+        timer.Start();
     }
 
 
@@ -107,46 +130,12 @@ public class PlayerController : MonoBehaviour
     {
         onGround = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
 
-        Debug.Log("On Ground: " + onGround);
+        //Debug.Log("On Ground: " + onGround);
     }
 
     void FixedUpdate()
     {
         PlayerInputForce();
-    }
-
-    void PlayerInput()
-    {
-        Vector2 movementVector = new Vector2();
-
-        if (Input.GetButton("Left"))
-        {
-            movementVector.x -= speed;
-        }
-        if (Input.GetButton("Right"))
-        {
-            movementVector.x += speed;
-        }
-
-        
-
-        if (Input.GetButtonDown("Up"))
-        {
-            StartCoroutine(PerformJump());
-            //Jump();
-        }
-
-        if (jumping)
-        {
-            movementVector.y = updateY;
-        }
-
-        MovePlayer(movementVector);
-
-
-
-
-
     }
 
     void PlayerInputForce()
@@ -161,43 +150,31 @@ public class PlayerController : MonoBehaviour
         {
             movementVector.x += speed;
         }
-        if(movementVector.x == 0)
+        if (movementVector.x == 0)
         {
             Vector2 v = playerBody.velocity;
             v.x = 0;
             playerBody.velocity = v;
         }
-        if(onGround && Input.GetButtonDown("Jump"))
+        if (onGround && Input.GetButtonDown("Jump") && PassedJumpDelay())
         {
-            movementVector.y += jumpPower;
+            RestartJumpTimer();
+            movementVector.y += (hasJumpPowerUp ? jumpMultiplier : 1) * jumpPower;
         }
 
         MovePlayerForce(movementVector);
     }
 
-    IEnumerator PerformJump()
+    void RestartJumpTimer()
     {
-        jumping = true;
-        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Stop();
+        timer.Reset();
         timer.Start();
+    }
 
-        float startY = gameObject.transform.position.y;
-
-
-        while (timer.Elapsed.TotalSeconds < secondsToJump)
-        {
-            //TODO: Jump broke
-            updateY = jumpHeight; //* Mathf.Sin(Mathf.PI / 2 + Mathf.PI * (float)timer.Elapsed.TotalSeconds / secondsToJump);
-            Debug.LogWarning(Mathf.Sin(Mathf.PI * (float)timer.Elapsed.TotalSeconds / secondsToJump));
-            //Vector2 pos = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y + Mathf.Lerp(0, jumpHeight, (float)timer.Elapsed.TotalSeconds / secondsToJump));
-            //Debug.LogWarning("Jumping: " + pos);
-            //playerBody.MovePosition(pos);
-            yield return null;
-        }
-
-        Debug.LogWarning("Jump FInihed");
-
-        jumping = false;
+    bool PassedJumpDelay()
+    {
+        return timer.Elapsed.TotalSeconds >= jumpDelay;
     }
 
     void Jump()
@@ -205,18 +182,17 @@ public class PlayerController : MonoBehaviour
         playerBody.AddRelativeForce(Vector2.up * jumpPower);
     }
 
-    void MovePlayer(Vector2 vector)
-    {
-        Vector2 pos = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
-        Debug.Log("NOT Jumping: " + pos);
-        playerBody.MovePosition(pos + vector * Time.fixedDeltaTime);
-    }
-
     void MovePlayerForce(Vector2 vector)
     {
-        playerBody.AddForce(speed * vector, ForceMode2D.Impulse);
+        playerBody.AddForce(speed * new Vector2(vector.x, 0), ForceMode2D.Impulse);
 
-        if(Mathf.Abs(playerBody.velocity.x) > maxSpeed)
+        if (vector.y != 0)
+        {
+            Debug.LogWarning("Jump Force: " + vector.y);
+            playerBody.AddForce(new Vector2(0, speed * vector.y), ForceMode2D.Impulse);
+        }
+
+        if (Mathf.Abs(playerBody.velocity.x) > maxSpeed)
         {
             playerBody.velocity = new Vector2((playerBody.velocity.x < 0 ? -1 : 1) * maxSpeed, playerBody.velocity.y);
         }

@@ -54,9 +54,14 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Coin.cs" />
+     <Compile Include="Assets\Scripts\CoinSound.cs" />
+     <Compile Include="Assets\Scripts\CoinsRemainingText.cs" />
+     <Compile Include="Assets\Scripts\CoinsRemainingText3D.cs" />
      <Compile Include="Assets\Scripts\FollowPlayerCamera.cs" />
      <Compile Include="Assets\Scripts\GameEvents.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\JumpPowerUp.cs" />
+     <Compile Include="Assets\Scripts\JumpPowerUpSound.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\PlayerScore.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />

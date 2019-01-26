@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     public GameEvents.Player.UpdateScore OnUpdateScore;
 
+    public GameEvents.Player.CollectedJumpPowerUp OnCollectedJumpPowerUp;
+
     static GameManager _instance;
 
     public static GameManager Manager

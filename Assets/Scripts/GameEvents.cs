@@ -13,5 +13,10 @@ public class GameEvents
 
         [Serializable]
         public class UpdateScore : UnityEvent<int> { }
+
+        [Serializable]
+        public class CollectedJumpPowerUp : UnityEvent{ }
+
+
     }
 }
