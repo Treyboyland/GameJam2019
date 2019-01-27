@@ -15,6 +15,7 @@ public class CoinsRemainingText : MonoBehaviour
     void Start()
     {
         numCoins = GameObject.FindGameObjectsWithTag("Coin").Length;
+        GameManager.Manager.OnTargetScoreSet.Invoke(numCoins);
         GameManager.Manager.OnCollectedCoin.AddListener((int a) => Subtract());
         SetCoinText();
     }

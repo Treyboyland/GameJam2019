@@ -60,6 +60,7 @@
      <Compile Include="Assets\Scripts\FollowPlayerCamera.cs" />
      <Compile Include="Assets\Scripts\GameEvents.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\HomeBase.cs" />
      <Compile Include="Assets\Scripts\JumpPowerUp.cs" />
      <Compile Include="Assets\Scripts\JumpPowerUpSound.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
