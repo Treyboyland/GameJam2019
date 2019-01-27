@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2899263342053845858}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -6.16, z: 0}
+  m_LocalPosition: {x: 0, y: -6.97, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2899263343208431505}
@@ -152,6 +152,7 @@ MonoBehaviour:
   speed: 10
   maxSpeed: 20
   jumpPower: 3
+  spriteRenderer: {fileID: 2899263343208431504}
   jumpDelay: 0.2
   jumpMultiplier: 1.5
   hasJumpPowerUp: 0

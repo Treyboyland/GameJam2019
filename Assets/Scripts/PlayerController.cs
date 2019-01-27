@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float jumpPower;
 
+    [SerializeField]
+    SpriteRenderer spriteRenderer;
+
     /// <summary>
     /// Force added on the jump
     /// </summary>
@@ -91,6 +94,26 @@ public class PlayerController : MonoBehaviour
     bool onGround = false;
 
     /// <summary>
+    /// True if the player is Grounded
+    /// </summary>
+    /// <value></value>
+    public bool IsGrounded
+    {
+        get
+        {
+            return onGround;
+        }
+    }
+
+    public bool IsMoving
+    {
+        get
+        {
+            return Mathf.Abs(playerBody.velocity.x) > 0 && Mathf.Abs(playerBody.velocity.y) > 0;
+        }
+    }
+
+    /// <summary>
     /// Reference to the current player
     /// </summary>
     /// <value></value>
@@ -99,6 +122,20 @@ public class PlayerController : MonoBehaviour
         get
         {
             return _instance;
+        }
+    }
+
+    bool acceptingPlayerInput = true;
+
+    public bool AcceptingPlayerInput
+    {
+        get
+        {
+            return acceptingPlayerInput;
+        }
+        set
+        {
+            acceptingPlayerInput = value;
         }
     }
 
@@ -125,14 +162,29 @@ public class PlayerController : MonoBehaviour
         });
 
         GameManager.Manager.OnCollectedJumpPowerUp.AddListener(() => hasJumpPowerUp = true);
+
+        GameManager.Manager.OnGoToSecretRoom.AddListener(StopPlayer);
         timer.Start();
+    }
+
+    /// <summary>
+    /// Stops the player in their tracks
+    /// </summary>
+    void StopPlayer()
+    {
+        playerBody.isKinematic = true;
+        acceptingPlayerInput = false;
+        playerBody.velocity = new Vector2();
     }
 
 
     void Update()
     {
-        onGround = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-        UpdateAirAnimBool(!onGround);
+        if (acceptingPlayerInput)
+        {
+            onGround = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
+            UpdateAirAnimBool(!onGround);
+        }
         //Debug.Log("On Ground: " + onGround);
     }
 
@@ -153,7 +205,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        PlayerInputForce();
+        if (acceptingPlayerInput)
+        {
+            PlayerInputForce();
+        }
     }
 
     void PlayerInputForce()
@@ -180,11 +235,12 @@ public class PlayerController : MonoBehaviour
         }
         if (onGround && Input.GetButtonDown("Jump") && PassedJumpDelay())
         {
+            GameManager.Manager.OnPlayerJumped.Invoke();
             RestartJumpTimer();
             movementVector.y += (hasJumpPowerUp ? jumpMultiplier : 1) * jumpPower;
         }
 
-        if(rightBool && leftBool)
+        if (rightBool && leftBool)
         {
             leftBool = false;
             rightBool = false;
@@ -227,5 +283,26 @@ public class PlayerController : MonoBehaviour
         {
             playerBody.velocity = new Vector2((playerBody.velocity.x < 0 ? -1 : 1) * maxSpeed, playerBody.velocity.y);
         }
+    }
+
+    /// <summary>
+    /// Dev method to give the player the powerup
+    /// </summary>
+    public void PowerUp()
+    {
+        hasJumpPowerUp = true;
+    }
+
+    public void Rotate()
+    {
+        animator.SetTrigger("Beam Up");
+    }
+
+    /// <summary>
+    /// Sets Mask for the alien thing
+    /// </summary>
+    public void SetSpriteMask()
+    {
+        spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
     }
 }

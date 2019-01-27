@@ -33,14 +33,14 @@ public class HomeBase : MonoBehaviour
             {
                 player = col.gameObject.GetComponent<PlayerController>();
             }
-            if(player != null && !doingConfetti && GameManager.Manager.TargetSet && player.Score >= GameManager.Manager.TargetScore)
+            if(player != null && !doingConfetti && GameManager.Manager.IsTargetSet && player.Score >= GameManager.Manager.TargetScore)
             {
                 doingConfetti = true;
                 DoWinningStuff();
             }
             else
             {
-                Debug.LogWarning("Score: " + player.Score + ", Target: " + GameManager.Manager.TargetScore  +", Set: " + GameManager.Manager.TargetSet);
+                Debug.LogWarning("Score: " + player.Score + ", Target: " + GameManager.Manager.TargetScore  +", Set: " + GameManager.Manager.IsTargetSet);
             }
         }
     }

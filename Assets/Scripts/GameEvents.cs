@@ -17,6 +17,9 @@ public class GameEvents
         [Serializable]
         public class CollectedJumpPowerUp : UnityEvent { }
 
+        [Serializable]
+        public class PlayerJumped : UnityEvent { }
+
 
     }
 
@@ -30,5 +33,14 @@ public class GameEvents
     {
         [Serializable]
         public class GameComplete : UnityEvent { }
+
+        [Serializable]
+        public class GoToSecretRoom : UnityEvent { }
+
+        [Serializable]
+        public class MuteBackgroundAudio : UnityEvent { }
+
+        [Serializable]
+        public class PlayAlienTheme : UnityEvent { }
     }
 }

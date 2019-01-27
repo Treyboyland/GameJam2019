@@ -30,6 +30,27 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public GameEvents.SystemEvents.GameComplete OnGameComplete;
 
+    /// <summary>
+    /// Event fired when the player hould go to the secret room;
+    /// </summary>
+    public GameEvents.SystemEvents.GoToSecretRoom OnGoToSecretRoom;
+
+    /// <summary>
+    /// Event invoked to mute background audio
+    /// </summary>
+    public GameEvents.SystemEvents.MuteBackgroundAudio OnMuteBackgroundAudio;
+
+    /// <summary>
+    /// Event invoked to play alien theme
+    /// </summary>
+    public GameEvents.SystemEvents.PlayAlienTheme OnPlayAlienTheme;
+
+
+    /// <summary>
+    /// Event fired when player jumps
+    /// </summary>
+    public GameEvents.Player.PlayerJumped OnPlayerJumped;
+
     static GameManager _instance;
 
     /// <summary>
@@ -46,7 +67,7 @@ public class GameManager : MonoBehaviour
     /// True if the game has been completed
     /// </summary>
     /// <value></value>
-    public bool GameComplete
+    public bool IsGameComplete
     {
         get
         {
@@ -57,7 +78,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// True if the target number of coins has been set for the game
     /// </summary>
-    public bool TargetSet
+    public bool IsTargetSet
     {
         get
         {
@@ -99,6 +120,13 @@ public class GameManager : MonoBehaviour
 
         _instance = this;
         OnTargetScoreSet.AddListener((int a) => { targetScore = a; targetSet = true; });
+        OnGameComplete.AddListener(() => gameComplete = true);
+        Cursor.visible = false;
+    }
+
+    public void CompleteGame()
+    {
+        OnGameComplete.Invoke();
     }
 
 }
