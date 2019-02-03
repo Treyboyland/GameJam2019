@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/_Scenes/LoadingScene.unity
+    guid: 31c8a40382775db4a98df9a67939a76e
+  - enabled: 1
+    path: Assets/_Scenes/Test_Roosevelt.unity
+    guid: 346d3ecc0642a2f439b0d7e37934810f
   m_configObjects: {}

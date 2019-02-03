@@ -61,6 +61,7 @@
      <Compile Include="Assets\Scripts\CoinsRemainingText3D.cs" />
      <Compile Include="Assets\Scripts\FollowPlayerCamera.cs" />
      <Compile Include="Assets\Scripts\GameEvents.cs" />
+     <Compile Include="Assets\Scripts\GameLoader.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\HomeBase.cs" />
      <Compile Include="Assets\Scripts\JumpPowerUp.cs" />

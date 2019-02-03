@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -127,6 +128,33 @@ public class GameManager : MonoBehaviour
     public void CompleteGame()
     {
         OnGameComplete.Invoke();
+    }
+
+    void Update()
+    {
+        CheckInput();
+    }
+
+    void CloseGame()
+    {
+        Application.Quit();
+    }
+
+    void CheckInput()
+    {
+        if(Input.GetButton("Reset"))
+        {
+            ResetGame();
+        }
+        else if(Input.GetButton("Quit"))
+        {
+            CloseGame();
+        }
+    }
+
+    void ResetGame()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
 }
